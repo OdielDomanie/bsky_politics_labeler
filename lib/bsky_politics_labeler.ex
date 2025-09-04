@@ -1,0 +1,2 @@
+defmodule BskyPoliticsLabeler do
+end
