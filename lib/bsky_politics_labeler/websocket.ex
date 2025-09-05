@@ -231,10 +231,16 @@ defmodule BskyPoliticsLabeler.Websocket do
         |> Repo.update_all(inc: [likes: 1])
 
       case posts do
-        [%Post{likes: likes} = post] when likes >= 10 ->
+        [%Post{likes: likes} = post] when likes >= @min_likes ->
+res =
           Task.Supervisor.start_child(Label.TaskSV, fn ->
             Label.label(post, cid, state.labeler_did, state.session_manager)
           end)
+
+if match?({:error, _reason}, res) do
+            {:error, reason} = res
+            Logger.warning("Could not start task: #{inspect(reason)}")
+          end
 
           Repo.delete!(post)
 
