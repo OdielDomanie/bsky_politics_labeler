@@ -3,13 +3,6 @@ import Config
 config :bsky_politics_labeler,
   ecto_repos: [BskyPoliticsLabeler.Repo]
 
-# config :bsky_politics_labeler, BskyPoliticsLabeler.Repo,
-#   log: false,
-#   database: "bsky_politics_labeler_repo",
-#   username: "postgres",
-#   password: "dev_postgres_pw",
-#   hostname: "localhost"
-
 # config :logger,
 #   level: :info
 
