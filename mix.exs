@@ -22,7 +22,8 @@ defmodule BskyPoliticsLabeler.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:atproto, path: "../atproto"},
+      {:atproto, git: "https://github.com/OdielDomanie/atproto.git"},
+      # {:atproto, path: "../atproto"},
       {:wesex, git: "https://github.com/OdielDomanie/wesex", tag: "0.4.3"},
       {:req, "~> 0.3"},
       {:ex_openai, "~> 1.8"},
