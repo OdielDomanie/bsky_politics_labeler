@@ -9,7 +9,9 @@ defmodule BskyPoliticsLabeler.Label do
     Logger.debug("#{is_political}: #{text}")
 
     if is_political do
-      put_us_politics_label(post, subject_cid, labeler_did, session_manager)
+      if not Application.get_env(:bsky_politics_labeler, :simulate_emit_event) do
+        put_us_politics_label(post, subject_cid, labeler_did, session_manager)
+      end
     end
   end
 
@@ -26,31 +28,13 @@ defmodule BskyPoliticsLabeler.Label do
     path = "/xrpc/tools.ozone.moderation.emitEvent"
     method = :post
 
-    # {
-    #   "subject": {
-    #     "$type": "com.atproto.repo.strongRef",
-    #     "uri": "at://did:plc:vt.../app.bsky.feed.post/3lu...",
-    #     "cid": "baf..."
-    #   },
-    #   "createdBy": "did:plc:r5...",
-    #   "subjectBlobCids": [],
-    #   "event": {
-    #     "$type": "tools.ozone.moderation.defs#modEventLabel",
-    #     "comment": "",
-    #     "createLabelVals": [
-    #       "uspol"
-    #     ],
-    #     "negateLabelVals": [],
-    #     "durationInHours": 0
-    #   }
-    # }
-
     body = %{
       event: %{
         "$type": "tools.ozone.moderation.defs#modEventLabel",
         comment: "ai",
         createLabelVals: ["uspol"],
         negateLabelVals: []
+        #  durationInHours: 0
       },
       subject: %{
         "$type": "com.atproto.repo.strongRef",

@@ -10,7 +10,7 @@ defmodule BskyPoliticsLabeler.Websocket do
 
   def start_link(opts) do
     # {wesex_opts, genserver_opts} = Keyword.split(opts, [:url, :headers, :adapter_opts, :init_arg])
-    {config, genserver_opts} = Keyword.split(opts, [:labeler_did, :session_manager])
+    {config, genserver_opts} = Keyword.split(opts, [:labeler_did, :session_manager, :min_likes])
     genserver_opts = Keyword.put_new(genserver_opts, :name, __MODULE__)
 
     GenServer.start_link(__MODULE__, config, genserver_opts)
@@ -31,7 +31,8 @@ defmodule BskyPoliticsLabeler.Websocket do
        counter: %{},
        reconnect_timer: nil,
        labeler_did: labeler_did,
-       session_manager: session_manager
+       session_manager: session_manager,
+       min_likes: config[:min_likes] || 50
      }, {:continue, :connect}}
   end
 
@@ -230,14 +231,16 @@ defmodule BskyPoliticsLabeler.Websocket do
         )
         |> Repo.update_all(inc: [likes: 1])
 
-      case posts do
-        [%Post{likes: likes} = post] when likes >= @min_likes ->
-res =
-          Task.Supervisor.start_child(Label.TaskSV, fn ->
-            Label.label(post, cid, state.labeler_did, state.session_manager)
-          end)
+      # dbg(state.min_likes)
 
-if match?({:error, _reason}, res) do
+      case posts do
+        [%Post{likes: likes} = post] when likes >= state.min_likes ->
+          res =
+            Task.Supervisor.start_child(Label.TaskSV, fn ->
+              Label.label(post, cid, state.labeler_did, state.session_manager)
+            end)
+
+          if match?({:error, _reason}, res) do
             {:error, reason} = res
             Logger.warning("Could not start task: #{inspect(reason)}")
           end

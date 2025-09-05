@@ -3,7 +3,11 @@ import Config
 config :bsky_politics_labeler,
   labeler_did: System.get_env("BSKY_POLITICS_LABELER_DID"),
   labeler_password: System.get_env("BSKY_POLITICS_LABELER_PASSWORD"),
-  start_websocket: System.get_env("BSKY_POLITICS_LABELER_START_WEBSOCKET") == "true"
+  start_websocket: System.get_env("BSKY_POLITICS_LABELER_START_WEBSOCKET") == "true",
+  simulate_emit_event: System.get_env("BSKY_POLITICS_LABELER_SIMULATE") == "true",
+  min_likes:
+    System.get_env("BSKY_POLITICS_LABELER_MIN_LIKES", "50")
+    |> String.to_integer()
 
 config :bsky_politics_labeler, BskyPoliticsLabeler.Repo,
   log: false,
