@@ -7,7 +7,8 @@ defmodule BskyPoliticsLabeler.MixProject do
       version: "0.1.0",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
@@ -31,6 +32,12 @@ defmodule BskyPoliticsLabeler.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:stream_data, "~> 1.2", only: [:test]},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
+    ]
+  end
+
+  defp aliases do
+    [
+      test: "test --no-start"
     ]
   end
 end
