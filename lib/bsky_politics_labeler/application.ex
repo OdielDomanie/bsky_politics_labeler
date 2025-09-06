@@ -10,9 +10,11 @@ defmodule BskyPoliticsLabeler.Application do
     labeler_did = Application.fetch_env!(:bsky_politics_labeler, :labeler_did)
     labeler_password = Application.fetch_env!(:bsky_politics_labeler, :labeler_password)
     min_likes = Application.get_env(:bsky_politics_labeler, :min_likes)
+    regex_file = Application.get_env(:bsky_politics_labeler, :regex_file)
 
     children = [
       BskyPoliticsLabeler.Repo,
+      {BskyPoliticsLabeler.Patterns, regex_file},
       {Task.Supervisor, name: BskyPoliticsLabeler.Label.TaskSV, max_children: 20},
       {Atproto.SessionManager,
        name: BskyPoliticsLabeler.Atproto.SessionManager,

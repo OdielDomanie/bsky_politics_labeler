@@ -29,6 +29,7 @@ defmodule BskyPoliticsLabeler.MixProject do
       {:ex_openai, "~> 1.8"},
       {:ecto_sql, "~> 3.13"},
       {:postgrex, ">= 0.0.0"},
+      {:stream_data, "~> 1.2", only: [:test]},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end

@@ -7,7 +7,8 @@ config :bsky_politics_labeler,
   simulate_emit_event: System.get_env("BSKY_POLITICS_LABELER_SIMULATE") == "true",
   min_likes:
     System.get_env("BSKY_POLITICS_LABELER_MIN_LIKES", "50")
-    |> String.to_integer()
+    |> String.to_integer(),
+  regex_file: System.get_env("BSKY_POLITICS_LABELER_REGEX_FILE", "patterns.txt")
 
 config :bsky_politics_labeler, BskyPoliticsLabeler.Repo,
   log: false,

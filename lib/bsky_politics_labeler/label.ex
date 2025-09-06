@@ -1,22 +1,29 @@
 defmodule BskyPoliticsLabeler.Label do
   require Logger
-  alias BskyPoliticsLabeler.Base32Sortable
-  alias BskyPoliticsLabeler.{BskyHttpApi, Post, GenAi}
+  alias BskyPoliticsLabeler.{Base32Sortable, BskyHttpApi, Post, Patterns}
 
   def label(post, subject_cid, labeler_did, session_manager) do
     text = BskyHttpApi.get_text(post)
-    is_political = GenAi.ask_ai(text)
-    Logger.debug("#{is_political}: #{text}")
+    # is_political = GenAi.ask_ai(text)
 
-    if is_political do
-      if not Application.get_env(:bsky_politics_labeler, :simulate_emit_event) do
-        put_us_politics_label(post, subject_cid, labeler_did, session_manager)
-      end
+    unpolitical_or_reason = Patterns.us_politics_match(text)
+
+    case unpolitical_or_reason do
+      {true, pattern} ->
+        Logger.debug("#{true}, #{pattern}: #{text}")
+
+        if not Application.get_env(:bsky_politics_labeler, :simulate_emit_event) do
+          put_us_politics_label(post, pattern, subject_cid, labeler_did, session_manager)
+        end
+
+      false ->
+        Logger.debug("#{false}: #{text}")
     end
   end
 
   def put_us_politics_label(
         %Post{did: subject_did, rkey: subject_rkey},
+        reason,
         subject_cid,
         labeler_did,
         session_manager
@@ -31,7 +38,7 @@ defmodule BskyPoliticsLabeler.Label do
     body = %{
       event: %{
         "$type": "tools.ozone.moderation.defs#modEventLabel",
-        comment: "ai",
+        comment: reason,
         createLabelVals: ["uspol"],
         negateLabelVals: []
         #  durationInHours: 0
