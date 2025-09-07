@@ -2,7 +2,8 @@ defmodule BskyPoliticsLabeler.BskyHttpApi do
   alias BskyPoliticsLabeler.{Post, Base32Sortable}
 
   def get_text(%Post{did: did, rkey: rkey}) do
-    at_uri = "at://" <> did <> "/app.bsky.feed.post/" <> Base32Sortable.encode!(rkey)
+    {:ok, rkey} = Base32Sortable.encode(rkey)
+    at_uri = "at://" <> did <> "/app.bsky.feed.post/" <> rkey
 
     # dbg(at_uri)
 

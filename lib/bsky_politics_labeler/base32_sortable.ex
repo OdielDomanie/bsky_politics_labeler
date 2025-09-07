@@ -8,13 +8,26 @@ defmodule BskyPoliticsLabeler.Base32Sortable do
     so length is always 13 ASCII characters. The TID corresponding to integer zero is 2222222222222.
   """
 
-  def decode!(string) when byte_size(string) == 13 do
-    do_decode(string, 12)
+  @spec decode(String.t()) :: {:ok, integer()} | {:error, Exception.t()}
+  def decode(string) when byte_size(string) == 13 do
+    case do_decode(string, 12) do
+      {:ok, _} = res ->
+        res
+
+      {:error, %ArgumentError{message: msg}} ->
+        {:error, %ArgumentError{message: "Invalid base32-sortable: #{inspect(string)}" <> msg}}
+    end
+  end
+
+  def decode(string) when byte_size(string) != 13 do
+    {:error,
+     %ArgumentError{message: "Invalid base32-sortable: #{inspect(string)} not 13 characters"}}
   end
 
   @max_63 2 ** 63
 
-  def encode!(int) when int in 0..@max_63 do
+  @spec encode(integer()) :: {:ok, String.t()} | {:error, :not_63_bit_integer}
+  def encode(int) when int in 0..(@max_63 - 1)//1 do
     <<
       x00::4,
       x01::5,
@@ -31,39 +44,51 @@ defmodule BskyPoliticsLabeler.Base32Sortable do
       x12::5
     >> = <<int::64>>
 
-    [
-      value_character(x00),
-      value_character(x01),
-      value_character(x02),
-      value_character(x03),
-      value_character(x04),
-      value_character(x05),
-      value_character(x06),
-      value_character(x07),
-      value_character(x08),
-      value_character(x09),
-      value_character(x10),
-      value_character(x11),
-      value_character(x12)
-    ]
-    |> List.to_string()
+    res =
+      [
+        value_character(x00),
+        value_character(x01),
+        value_character(x02),
+        value_character(x03),
+        value_character(x04),
+        value_character(x05),
+        value_character(x06),
+        value_character(x07),
+        value_character(x08),
+        value_character(x09),
+        value_character(x10),
+        value_character(x11),
+        value_character(x12)
+      ]
+      |> List.to_string()
+
+    {:ok, res}
+  end
+
+  def encode(int) when is_integer(int) do
+    {:error, :not_63_bit_integer}
   end
 
   defp do_decode(<<c::integer-size(8), rest::binary>>, remaining) when remaining >= 0 do
-    if remaining == 12 and not (c in ?2..?7 or c in ?a..?j),
-      do: raise("Invalid base32-sortable: first character")
-
-    val = character_value(c)
-
-    val * 32 ** remaining + do_decode(rest, remaining - 1)
+    # c222222222222 is first bit 1 and the rest 0
+    # Despite what the spec says, in reality the first character is b at max
+    if remaining == 12 and not (c in ?2..?7 or c in ?a..?b) do
+      {:error, %ArgumentError{message: "invalid first character"}}
+    else
+      with {:ok, val} <- character_value(c),
+           {:ok, rest_decoded} <- do_decode(rest, remaining - 1) do
+        {:ok, val * 32 ** remaining + rest_decoded}
+      end
+    end
   end
 
-  defp do_decode(<<>>, -1), do: 0
+  defp do_decode(<<>>, -1), do: {:ok, 0}
 
   defp character_value(c) do
     cond do
-      c in ?2..?7 -> c - ?2
-      c in ?a..?z -> c - ?a + 6
+      c in ?2..?7 -> {:ok, c - ?2}
+      c in ?a..?z -> {:ok, c - ?a + 6}
+      true -> {:error, %ArgumentError{message: "invalid character"}}
     end
   end
 

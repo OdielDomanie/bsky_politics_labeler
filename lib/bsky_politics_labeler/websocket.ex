@@ -156,9 +156,15 @@ defmodule BskyPoliticsLabeler.Websocket do
         },
         state
       ) do
-    rkey_int = Base32Sortable.decode!(rkey)
-    # Sometimes there is a pkey conflict.
-    Repo.insert!(%Post{did: did, rkey: rkey_int, likes: 0}, on_conflict: :nothing)
+    case Base32Sortable.decode(rkey) do
+      {:ok, rkey_int} ->
+        # Sometimes there is a pkey conflict.
+        Repo.insert!(%Post{did: did, rkey: rkey_int, likes: 0}, on_conflict: :nothing)
+
+      {:error, _} ->
+        nil
+    end
+
     state
   end
 
@@ -175,9 +181,15 @@ defmodule BskyPoliticsLabeler.Websocket do
         },
         state
       ) do
-    rkey_int = Base32Sortable.decode!(rkey)
-    # allow stale because posts older than the program may be deleted.
-    Repo.delete(%Post{did: did, rkey: rkey_int}, allow_stale: true)
+    case Base32Sortable.decode(rkey) do
+      {:ok, rkey_int} ->
+        # allow_stale because posts older than the program may be deleted.
+        Repo.delete(%Post{did: did, rkey: rkey_int}, allow_stale: true)
+
+      {:error, _} ->
+        nil
+    end
+
     state
   end
 
@@ -217,9 +229,11 @@ defmodule BskyPoliticsLabeler.Websocket do
       ) do
     [subject_did, post_type, subject_rkey] = String.split(subject_at_uri, "/")
 
+    rkey_result = Base32Sortable.decode(subject_rkey)
     # Feed generators can also receive likes.
-    if post_type == "app.bsky.feed.post" do
-      subject_rkey_int = Base32Sortable.decode!(subject_rkey)
+    # Sometimes rkeys are illegal tids (first bit 1)
+    if post_type == "app.bsky.feed.post" and match?({:ok, _}, rkey_result) do
+      {:ok, subject_rkey_int} = rkey_result
 
       import Ecto.Query
 

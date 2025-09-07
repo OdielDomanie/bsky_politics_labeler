@@ -28,7 +28,7 @@ defmodule BskyPoliticsLabeler.Label do
         labeler_did,
         session_manager
       ) do
-    subject_rkey = Base32Sortable.encode!(subject_rkey)
+    {:ok, subject_rkey} = Base32Sortable.encode(subject_rkey)
 
     subject_uri = "at://#{subject_did}/app.bsky.feed.post/#{subject_rkey}"
 
@@ -52,7 +52,12 @@ defmodule BskyPoliticsLabeler.Label do
     }
 
     case Atproto.request([url: path, json: body, method: method], session_manager)
-         |> Req.merge(headers: ["atproto-proxy": labeler_did <> "#atproto_labeler"])
+         |> Req.merge(
+           headers: [
+             "atproto-proxy": labeler_did <> "#atproto_labeler",
+             "accept-language": "en-US"
+           ]
+         )
          |> Req.request() do
       {:ok, %Req.Response{status: 200, body: body}} ->
         # Logger.info("Put labeler service record: #{inspect(body)}")
