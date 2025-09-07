@@ -22,12 +22,18 @@ defmodule BskyPoliticsLabeler.BskyHttpApi do
           "record" => %{
             "text" => text
           }
-        }
+        } = post
       ]
     } = resp.body
 
-    # dbg(text)
-    text
+    images = post["record"]["embed"]["images"] || []
+
+    alts =
+      for %{"alt" => alt} <- images, alt != "" do
+        alt
+      end
+
+    Enum.join([text | alts], "\n")
   end
 end
 

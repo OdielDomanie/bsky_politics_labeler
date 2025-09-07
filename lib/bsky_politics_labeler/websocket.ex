@@ -245,8 +245,6 @@ defmodule BskyPoliticsLabeler.Websocket do
         )
         |> Repo.update_all(inc: [likes: 1])
 
-      # dbg(state.min_likes)
-
       case posts do
         [%Post{likes: likes} = post] when likes >= state.min_likes ->
           res =
