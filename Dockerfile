@@ -87,6 +87,7 @@ COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/bsky_politics
 
 USER nobody
 
+ENV START_WEBSOCKET="true"
 ENV BSKY_POSTER="true"
 
 # Run the database migration and the start

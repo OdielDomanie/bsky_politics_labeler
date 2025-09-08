@@ -46,6 +46,7 @@ erl_crash.dump
 
 .env
 .*.env
-systemd
 
 patterns.txt
+secret
+secret.example
