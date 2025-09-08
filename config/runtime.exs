@@ -19,8 +19,5 @@ config :bsky_politics_labeler, BskyPoliticsLabeler.Repo,
   hostname: System.get_env("POSTGRES_HOST", "localhost"),
   port: System.get_env("POSTGRES_PORT", "5432")
 
-config :ex_openai,
-  base_url: System.get_env("OPENAI_URL", "http://127.0.0.1:8080")
-
 config :bsky_politics_labeler, BskyPoliticsLabeler.WebEndpoint,
   secret_key_base: System.get_env("PHOENIX_SECRET_KEY_BASE")

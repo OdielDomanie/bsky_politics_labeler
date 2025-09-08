@@ -12,16 +12,6 @@ config :logger,
     # [module: Bar, function: "foo/3", ]
   ]
 
-# config :ex_openai,
-#   api_key: "",
-#   organization_key: ""
-
-# Optional settings
-# base_url: "http://127.0.0.1:8080"
-
-# http_options: [recv_timeout: 50_000],
-# http_headers: [{"OpenAI-Beta", "assistants=v2"}]
-
 config :bsky_politics_labeler, BskyPoliticsLabeler.WebEndpoint,
   url: [host: "localhost"],
   server: true,

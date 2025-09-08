@@ -27,7 +27,6 @@ defmodule BskyPoliticsLabeler.MixProject do
       # {:atproto, path: "../atproto"},
       {:wesex, git: "https://github.com/OdielDomanie/wesex", tag: "0.4.3"},
       {:req, "~> 0.3"},
-      {:ex_openai, "~> 1.8"},
       {:ecto_sql, "~> 3.13"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
