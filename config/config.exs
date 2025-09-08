@@ -22,4 +22,15 @@ config :logger,
 # http_options: [recv_timeout: 50_000],
 # http_headers: [{"OpenAI-Beta", "assistants=v2"}]
 
+config :bsky_politics_labeler, BskyPoliticsLabeler.WebEndpoint,
+  url: [host: "localhost"],
+  server: true,
+  http: [ip: {127, 0, 0, 1}, port: 4000],
+  adapter: Bandit.PhoenixAdapter,
+  render_errors: [
+    formats: [html: BskyPoliticsLabeler.WebEndpoint.ErrorHTML],
+    layout: false
+  ],
+  live_view: [signing_salt: "jWkfqfmF"]
+
 import_config "#{config_env()}.exs"

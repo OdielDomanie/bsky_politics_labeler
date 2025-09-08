@@ -8,7 +8,8 @@ config :bsky_politics_labeler,
   min_likes:
     System.get_env("BSKY_POLITICS_LABELER_MIN_LIKES", "50")
     |> String.to_integer(),
-  regex_file: System.get_env("BSKY_POLITICS_LABELER_REGEX_FILE", "patterns.txt")
+  regex_file: System.get_env("BSKY_POLITICS_LABELER_REGEX_FILE", "patterns.txt"),
+  admin_dashboard_password: System.get_env("BSKY_POLITICS_DASHBOARD_PASSWORD")
 
 config :bsky_politics_labeler, BskyPoliticsLabeler.Repo,
   log: false,
@@ -20,3 +21,6 @@ config :bsky_politics_labeler, BskyPoliticsLabeler.Repo,
 
 config :ex_openai,
   base_url: System.get_env("OPENAI_URL", "http://127.0.0.1:8080")
+
+config :bsky_politics_labeler, BskyPoliticsLabeler.WebEndpoint,
+  secret_key_base: System.get_env("PHOENIX_SECRET_KEY_BASE")

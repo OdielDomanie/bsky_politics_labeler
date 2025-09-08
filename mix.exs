@@ -15,7 +15,7 @@ defmodule BskyPoliticsLabeler.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :runtime_tools, :os_mon],
       mod: {BskyPoliticsLabeler.Application, []}
     ]
   end
@@ -30,6 +30,9 @@ defmodule BskyPoliticsLabeler.MixProject do
       {:ex_openai, "~> 1.8"},
       {:ecto_sql, "~> 3.13"},
       {:postgrex, ">= 0.0.0"},
+      {:phoenix_live_dashboard, "~> 0.8.3"},
+      {:ecto_psql_extras, "~> 0.7"},
+      {:bandit, "~> 1.5"},
       {:stream_data, "~> 1.2", only: [:test]},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
