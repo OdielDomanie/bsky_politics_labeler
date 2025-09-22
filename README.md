@@ -28,6 +28,8 @@ on my local PC.
 
 First you need to set-up Ozone: https://github.com/bluesky-social/ozone/blob/main/HOSTING.md
 
+If you have a previous Ozone hosting, you must re-use the same signing key.
+
 You can co-host this app on the same host,
 the described host specs on the Ozone guide is more than enough.
 
@@ -72,6 +74,9 @@ sudo docker run --name bsky-pol-labeler-postgres \
   --network bsky-pol-labeler-network \
   -d docker.io/library/postgres
 ```
+
+You may use the Postgres CLI argument `--synchronous_commit=off` to improve IO performance,
+as the data written to disk is not critical.
 
 Finally, start our app:
 ```sh
