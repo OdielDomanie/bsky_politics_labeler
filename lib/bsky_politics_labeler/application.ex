@@ -9,14 +9,13 @@ defmodule BskyPoliticsLabeler.Application do
   def start(_type, _args) do
     labeler_did = Application.fetch_env!(:bsky_politics_labeler, :labeler_did)
     labeler_password = Application.fetch_env!(:bsky_politics_labeler, :labeler_password)
-    min_likes = Application.get_env(:bsky_politics_labeler, :min_likes)
     regex_file = Application.get_env(:bsky_politics_labeler, :regex_file)
 
     children = [
-      BskyPoliticsLabeler.Repo,
+      # BskyPoliticsLabeler.Repo,
       BskyPoliticsLabeler.WebEndpoint,
       {BskyPoliticsLabeler.Patterns, regex_file},
-      {Task.Supervisor, name: BskyPoliticsLabeler.Label.TaskSV, max_children: 20},
+      {Task.Supervisor, name: BskyPoliticsLabeler.Label.TaskSV},
       {Atproto.SessionManager,
        name: BskyPoliticsLabeler.Atproto.SessionManager,
        did: labeler_did,
@@ -28,9 +27,7 @@ defmodule BskyPoliticsLabeler.Application do
         if Application.get_env(:bsky_politics_labeler, :start_websocket) do
           [
             {BskyPoliticsLabeler.Websocket,
-             labeler_did: labeler_did,
-             session_manager: BskyPoliticsLabeler.Atproto.SessionManager,
-             min_likes: min_likes}
+             labeler_did: labeler_did, session_manager: BskyPoliticsLabeler.Atproto.SessionManager}
           ]
         else
           []
