@@ -24,7 +24,7 @@ The next step is to run OCR on the images.
 Testing shows it takes ~0.5 second per image on a single thread
 on my local PC.
 
-## Hosting
+## Deployment
 
 First you need to set-up Ozone: https://github.com/bluesky-social/ozone/blob/main/HOSTING.md
 

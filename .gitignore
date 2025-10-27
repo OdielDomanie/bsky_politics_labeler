@@ -25,4 +25,5 @@ bsky_politics_labeler-*.tar
 bsky_politics_labeler.docker.tar
 
 secret
+deployment
 account.exs
