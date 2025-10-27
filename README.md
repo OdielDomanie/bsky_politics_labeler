@@ -28,6 +28,8 @@ on my local PC.
 
 First you need to set-up Ozone: https://github.com/bluesky-social/ozone/blob/main/HOSTING.md
 
+If you have a previous Ozone hosting, you must re-use the same signing key.
+
 You can co-host this app on the same host,
 the described host specs on the Ozone guide is more than enough.
 
@@ -72,6 +74,9 @@ sudo docker run --name bsky-pol-labeler-postgres \
   --network bsky-pol-labeler-network \
   -d docker.io/library/postgres
 ```
+
+You may use the Postgres CLI argument `--synchronous_commit=off` to improve IO performance,
+as the data written to disk is not critical.
 
 Finally, start our app:
 ```sh
@@ -122,3 +127,13 @@ http://localhost:4000/admin/dashboard/
 
 The file can be edited, and the changes will be reloaded immediately.
 Any invalid regex error will be logged as well.
+
+# Copyright and License Notice
+
+Copyright 2025, meozk
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>. 
